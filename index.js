@@ -142,15 +142,17 @@ export default class FlipView extends Component {
     } = this._getTargetRenderStateFromFlippedValue(nextIsFlipped);
 
     let animations = [
-      this._animateValue(this.state.frontRotationAnimatedValue, frontRotation, this.props.flipEasing),
-      this._animateValue(this.state.backRotationAnimatedValue, backRotation, this.props.flipEasing)
+      this._animateValue(this.state.frontRotationAnimatedValue, frontRotation, this.props.flipEasing, 0, this.props.flipDuration),
+      this._animateValue(this.state.backRotationAnimatedValue, backRotation, this.props.flipEasing, 0, this.props.flipDuration)
     ];
 
     if (Platform.OS === 'android') {
+      const halfFlipDuration = this.props.flipDuration / 2;
+
       animations = [
         ...animations,
-        this._animateValue(this.state.frontOpacityAnimatedValue, frontOpacity, this.props.flipEasing, 100),
-        this._animateValue(this.state.backOpacityAnimatedValue, backOpacity, this.props.flipEasing, 100)
+        this._animateValue(this.state.frontOpacityAnimatedValue, frontOpacity, this.props.flipEasing, halfFlipDuration, 0),
+        this._animateValue(this.state.backOpacityAnimatedValue, backOpacity, this.props.flipEasing, halfFlipDuration, 0),
       ];
     }
 
@@ -167,14 +169,14 @@ export default class FlipView extends Component {
     });
   };
 
-  _animateValue = (animatedValue, toValue, easing, delay = 0) =>
+  _animateValue = (animatedValue, toValue, easing, delay = 0, duration = 0) =>
     Animated.timing(
       animatedValue,
       {
-        toValue,
-        duration: this.props.flipDuration,
-        easing,
-        delay
+        toValue: toValue,
+        duration: duration,
+        easing: easing,
+        delay: delay,
       });
   }
 
